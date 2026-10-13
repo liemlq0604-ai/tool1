@@ -29,7 +29,6 @@ function showResult(data) {
   const unique=[...new Set(records.map(r=>r.part))].sort();
   $('#part').replaceChildren(new Option('Tất cả mã sản phẩm',''),...unique.map(p=>new Option(p,p)));
   $('#search').value='';$('#color').value='';
-  text($('#summary'),`Sheet: ${data.sheet} · ${records.length} dòng · ${unique.length} mã sản phẩm`);
   draw();
   if(data.warnings?.length) alertUser(data.warnings.join(' '),'warning'); else alertUser(`${records.length} dòng đã sẵn sàng.`, 'success');
 }

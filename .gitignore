@@ -1,6 +1,0 @@
-node_modules/
-.env
-*.xlsx
-*.xls
-*.pdf
-.DS_Store
