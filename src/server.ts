@@ -34,7 +34,7 @@ async function importXlsx(req: IncomingMessage, res: ServerResponse) {
   } finally { await rm(dir, { recursive: true, force: true }); }
 }
 async function staticPage(url: URL, res: ServerResponse) {
-  const paths: Record<string,string> = { '/':'index.html', '/index.html':'index.html', '/print.html':'print.html', '/app.js':'app.js', '/print.js':'print.js', '/lot-colors.js':'lot-colors.js', '/style.css':'style.css' };
+  const paths: Record<string,string> = { '/':'index.html', '/index.html':'index.html', '/print.html':'print.html', '/app.js':'app.js', '/print.js':'print.js', '/print-date.js':'print-date.js', '/lot-colors.js':'lot-colors.js', '/style.css':'style.css' };
   const file = paths[url.pathname];
   if (!file) return json(res, 404, { error: 'Không tìm thấy' });
   res.writeHead(200, { 'Content-Type': MIME[extname(file)] ?? 'application/octet-stream', 'X-Content-Type-Options':'nosniff', 'Cache-Control':'no-store', 'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'" });

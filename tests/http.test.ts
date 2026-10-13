@@ -11,7 +11,7 @@ test('Ubuntu-compatible runtime: health, assets, corrupt input, static path whit
       child.stdout.on('data',data=>{const match=/http:\/\/127\.0\.0\.1:\d+/.exec(String(data));if(match){clearTimeout(timeout);resolve(match[0]);}});
     });
     const health=await fetch(base+'/api/health');assert.equal(health.status,200);assert.equal((await health.json()).app,'tool1-parts-card');
-    for(const file of ['/','/app.js','/lot-colors.js','/print.html','/print.js','/style.css']) {
+    for(const file of ['/','/app.js','/lot-colors.js','/print.html','/print.js','/print-date.js','/style.css']) {
       const response=await fetch(base+file);assert.equal(response.status,200,file);assert.ok(response.headers.get('content-security-policy'));await response.text();
     }
     const invalid=await fetch(base+'/api/import',{method:'POST',body:Buffer.alloc(150)});assert.equal(invalid.status,422);assert.ok((await invalid.json()).error);

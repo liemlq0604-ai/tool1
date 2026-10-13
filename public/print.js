@@ -1,4 +1,5 @@
 import {validRecord, COLOR_NAMES} from './lot-colors.js';
+import {exportDate} from './print-date.js';
 const container=document.querySelector('#sheet-container');
 let payload;
 try {payload=JSON.parse(sessionStorage.getItem('parts-card-print')||'null');}catch {payload=null;}
@@ -14,7 +15,8 @@ function card(r,mode) {
   const title=document.createElement('h3');title.textContent='現品表  PARTS CARD';article.append(title);
   article.append(field('PO NO.',r.po),field('LOT NO.',r.lot),field('MODEL No.',r.model),field('PARTS No.',r.part),field('PARTS NAME.',r.name),field('QUANTITY',Number(r.quantity).toLocaleString('vi-VN')));
   const bottom=document.createElement('div');bottom.className='bottom-fields';
-  bottom.append(field('SUPPLIER',''),field('ASSY DAY',''));
+  const assyDay=field('ASSY DAY',exportDate());assyDay.classList.add('assy-day');
+  bottom.append(field('SUPPLIER',''),assyDay);
   article.append(bottom);
   return article;
 }
@@ -35,6 +37,7 @@ else {
 
 // Block printing if a source field still cannot fit at a readable font size.
 await document.fonts.ready;
+function validatePrintLayout() {
 let clipped=0;
 for (const content of document.querySelectorAll('.field strong')) {
   let size=parseFloat(getComputedStyle(content).fontSize);
@@ -44,7 +47,19 @@ for (const content of document.querySelectorAll('.field strong')) {
   if(content.scrollWidth>content.clientWidth+1) clipped++;
 }
 if(clipped) {error.hidden=false;error.textContent=`${clipped} ô quá dài để in rõ. Quay lại kiểm tra nội dung; chưa cho in bản bị cắt chữ.`;}
+else if(records.length) error.hidden=true;
 document.querySelector('#print').disabled=!records.length || clipped>0;
 document.body.dataset.printReady=String(records.length>0 && clipped===0);
+}
+validatePrintLayout();
+
+// Recompute when printing, including Ctrl+P and a preview left open overnight.
+window.addEventListener('beforeprint',()=>{
+  const today=exportDate();
+  for(const content of document.querySelectorAll('.assy-day strong')) {
+    content.textContent=today;content.style.fontSize='';
+  }
+  validatePrintLayout();
+});
 document.querySelector('#print').addEventListener('click',()=>window.print());
 document.querySelector('#back').addEventListener('click',()=>{if(window.opener)window.close();else window.location.assign('/');});
