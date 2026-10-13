@@ -23,6 +23,12 @@ if [[ ! -d "$target" ]]; then
   cp -a "$stage/." "$target/"
   chown -R root:root "$target"
 fi
+# cp -a preserves the staging directory's 0700 mode. The service account
+# must be able to traverse the release and read its source, including reruns.
+find "$target" -type d -exec chmod 755 {} +
+find "$target" -type f -exec chmod 644 {} +
+runuser -u tool1 -- test -r "$target/src/server.ts"
+runuser -u tool1 -- bash -c 'cd "$1" && node --experimental-strip-types --test tests/*.test.ts' _ "$target"
 if ss -ltnH '( sport = :4173 )' | grep -q . && ! systemctl is-active --quiet tool1.service; then
   echo 'Port 4173 is occupied by another app; aborting.'; exit 1
 fi
