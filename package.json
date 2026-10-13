@@ -1,0 +1,12 @@
+{
+  "name": "tool1-parts-card",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "In Parts Card tu Excel, khong can database",
+  "engines": { "node": ">=22.16.0" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --experimental-strip-types src/server.ts",
+    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test tests/*.test.ts"
+  }
+}
